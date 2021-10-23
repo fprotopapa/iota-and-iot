@@ -21,3 +21,7 @@ python iota_send_message.py
 Or:
 
 [Check already attached messasge](https://explorer.iota.org/legacy-devnet/transaction/TXBQO9M9KCYHZPJCTHJRWNESBXJGPCBDZJPLURJYTTGJLQRHQSHTIVHNWOTINYB9HMFEPVMVMOZVTZ999)
+
+## Run node
+https://github.com/iotaledger/bee/tree/chrysalis-pt-2/bee-node
+https://github.com/gohornet/hornet
