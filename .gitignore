@@ -112,6 +112,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+windows-iota-client-py3.9-wheels/
 
 # Spyder project settings
 .spyderproject
