@@ -43,11 +43,32 @@ Run node
 
 ### Hornet
 
+OS: Debian 10 (Buster)
+
+https://hornet.docs.iota.org/getting_started/hornet_apt_repository
+
+Use nginx as reverse proxy:
+
+sudo apt-get install nginx
+Let's encrypt : https://certbot.eff.org/lets-encrypt/debianbuster-nginx
+
+https://medium.com/@jort.debokx/how-to-setup-https-for-your-iota-full-node-106f829ba2f1
+
+https://www.youtube.com/watch?v=nfBhdRCV2kw
+
 https://github.com/gohornet/hornet
 
 https://hochrhein-engineering.com/2021/04/18/build-and-run-iota-hornet-node/
 
 https://hornet.docs.iota.org/post_installation/peering
+
+https://nodesharing.wisewolf.de/ or use autopeering (enable port and plugin) https://github.com/massyu/hornet#autopeering
+
+Query Rest Api:
+
+curl https://address-to-node:port-of-rest-api/api/v1/info
+
+{"data":{"name":"HORNET","version":"1.0.5","isHealthy":true,"networkId":"chrysalis-mainnet","bech32HRP":"iota","minPoWScore":4000,"messagesPerSecond":10,"referencedMessagesPerSecond":11.5,"referencedRate":114.99999999999999,"latestMilestoneTimestamp":1635095521,"latestMilestoneIndex":1541666,"confirmedMilestoneIndex":1541666,"pruningIndex":1540081,"features":["PoW"]}}
 
 
 ### Streams
