@@ -173,7 +173,7 @@ Configure Hornet:
       "127.0.0.1",
       "::1"
     ],
-    
+     ...
     # E.g. configuration for Rest API
     # Create User, Hash and salt
     # Hash and Salt can be created via command
@@ -187,7 +187,7 @@ Configure Hornet:
       "passwordHash": "<your_hash>",
       "passwordSalt": "<your_salt>"
     }
-    
+    ...
   # Enable  autopeering
   "node": {
     "alias": "HORNET mainnet node",
@@ -198,7 +198,7 @@ Configure Hornet:
       "Autopeering"
     ]
   },
-
+    ...
 >>> sudo systemctl restart hornet
 ```
 
@@ -220,7 +220,7 @@ Useful and mandatory ports:
 80                         ALLOW       Anywhere # HTTP
 15600/tcp                  ALLOW       Anywhere # Gossip
 14626/udp                  ALLOW       Anywhere # Autopeering
-<Rest API>                 ALLOW       Anywhere # Rest API (redirect through nginx)
+<Rest_API>                 ALLOW       Anywhere # Rest API (redirect through nginx)
 ```
 
 Test Rest API:
