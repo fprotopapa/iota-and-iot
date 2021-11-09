@@ -12,8 +12,6 @@ import os
 import pprint
 
 # Config
-message_id = '497c1b68e5480d07819bbd9c989c8d245fa748667a89fdf7dac884741f493326'
-node_info = False
 msg_meta = False
 env_node_address = 'HORNET_NODE_ADDRESS'
 
@@ -35,6 +33,20 @@ def show_message(message, meta=False):
 
 # Connect to node and retrieve message
 def main():
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Receive message from IOTA tangle.')
+    parser.add_argument('--msg_id', dest='msg_id',
+                        default='497c1b68e5480d07819bbd9c989c8d245fa748667a89fdf7dac884741f493326',
+                        help='Id of message stored on tangle')
+    parser.add_argument('--node_info', dest='node_info',
+                        default=False,
+                        help='Print node information')
+
+    args = parser.parse_args()
+    message_id = args.msg_id
+    node_info = args.node_info
+
     # Get node address out of environment
     NODE_URL = os.getenv(env_node_address)
     if not NODE_URL:

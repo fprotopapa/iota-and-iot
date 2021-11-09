@@ -14,10 +14,7 @@ import os
 import pprint
 
 # Config
-message_str = 'Projekt badawczy - IOTA w IoT'
-indexation = 'Hello'
 env_node_address = 'HORNET_NODE_ADDRESS'
-node_info = False
 
 
 # Print Message data
@@ -33,7 +30,25 @@ def show_message(message):
 
 # Connect to node and send message
 def main():
-    NODE_URL = SEED = os.getenv(env_node_address)
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Send message to IOTA tangle.')
+    parser.add_argument('--msg', dest='msg',
+                        default='Projekt badawczy - IOTA w IoT',
+                        help='Message to send')
+    parser.add_argument('--node_info', dest='node_info',
+                        default=False,
+                        help='Print node information')
+    parser.add_argument('--indx', dest='indx',
+                        default='Hello',
+                        help='Set indexation for message')
+
+    args = parser.parse_args()
+    message_str = args.msg
+    node_info = args.node_info
+    indexation = args.indx
+
+    NODE_URL = os.getenv(env_node_address)
     if not NODE_URL:
         raise Exception("Please define environment variable with node URL.")
 
