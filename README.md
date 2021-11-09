@@ -1,21 +1,44 @@
 # iota-and-iot
 
+## Description
+
+The project goal is  to enable communication between different IoT participants using the IOTA layer. 
+The focus is on ensuring data integrity as well as authorization and authentication of participants. 
+
+## ToDo
+
+- [x] Setting up and running Hornet node
+- [x] Sending and retrieving message date from tangle
+- [ ] Setting up secure secret storage
+- [ ] Using streams to send and retrieve data
+- [ ] Testing authorization, authentication and data integrity
+
+
 ## Installation
 
+```
+Tested on:
 OS: Windows 10, 
 Python: 3.9.7, 
-PyOTA: 2.1.0,
+iota-client: 0.2.0a8,
+```
+
 
 ```
-python -m venv venv
-.\venv\Scripts\activate 
-pip install pyota
+python3 -m venv venv
+.\venv\Scripts\activate or source ./venv/bin/activate
+pip install -r requirements.txt
+
+Add environment variable named 'HORNET_NODE_ADDRESS' with node URL (https://<someAddressOrIP>:Port)
 ```
-## Write data
+## Run example
 
 Run:
 ```
-python iota_send_message.py
+python send_msg.py
+
+python receive_msg.py
+
 ```
 
 Or:
@@ -92,4 +115,8 @@ https://github.com/ggreeve/IOTA-Trust-Drinking-Water
 https://wiki.iota.org/iota.rs/libraries/python/api_reference#mqtt-apis
 
 https://chrysalis.docs.iota.org/libraries/client
+
+
+# Installation: https://client-lib.docs.iota.org/docs/libraries/python/getting_started/
+# https://client-lib.docs.iota.org/docs/libraries/python/api_reference
 
