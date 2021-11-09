@@ -123,8 +123,11 @@ For an e.g. nginx config file [look here](nginx/default).
 # Setup nginx as reverse server and Let's Encrypt for SSL
 
 sudo apt-get install nginx
+sudo systemctl start nginx
 
 # Edit config file at /etc/nginx/sites-available/default
+
+sudo systemctl reload nginx
 ```
 
 Get SSL Certificate from Let's Encrypt (URL needed):
@@ -207,8 +210,6 @@ ufw default allow outgoing
 ufw default deny incoming
 ufw allow <Port>
 ufw enable
-
-
 ```
 
 Useful and mandatory ports:
@@ -233,6 +234,17 @@ Test Rest API:
 "confirmedMilestoneIndex":1541666,"pruningIndex":1540081,"features":["PoW"]}}
 ```
 
+Tunnel to node GUI (for e.g. Putty):
+
+```
+Session -> Set Host IP and Port
+Connection -> SSH -> Auth -> Set Privat Key file path (optional)
+Connection -> SSH -> Tunnels -> Source Port 8081 / Destination localhost:8081 & Add
+
+Connect via Putty to server and call in local browser: http://localhost:8081/
+
+Login with user and password set in config.json
+```
 
 ## Build application uppon IOTA layer
 
@@ -245,3 +257,7 @@ ToDo: Create Pub/Sub system with streams
 
 * [IOTA HORNET Node Installation Party - June 5th, 2020](https://www.youtube.com/watch?v=nfBhdRCV2kw)
 * [IOTA](https://www.iota.org/)
+* [IOTA Client Docs](https://wiki.iota.org/iota.rs/libraries/python/examples)
+* [Tangle Explorer](https://explorer.iota.org/mainnet/)
+* [Hornet Node](https://hornet.docs.iota.org/welcome)
+* [IOTA Streams](https://github.com/iotaledger/streams)
