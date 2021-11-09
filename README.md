@@ -87,78 +87,62 @@ optional arguments:
   --indx INDX           Set indexation for message
 ```
 
-## Run node
+## Install Hornet node
 
-### Create Bee node
-Follow instructions:
-
-https://bee.docs.iota.org/configuration#protocol
-
-https://github.com/iotaledger/bee/tree/chrysalis-pt-2/bee-node
-
-Create key 
-
-..\target\release\bee p2p-identity
-
-Copy Private Key to config.toml -> Identity
-
-Run node
-
-..\target\release\bee
-
-### Hornet
-
+```
+Tested on:
 OS: Debian 10 (Buster)
+```
 
-https://hornet.docs.iota.org/getting_started/hornet_apt_repository
+Install Hornet node:
 
-Use nginx as reverse proxy:
+```
+# Install Hornet node
+sudo apt update
+sudo apt install hornet
+
+sudo systemctl enable hornet.service
+sudo service hornet start
+```
+
+Install nginx:
+
+For an e.g. nginx config file [look here](nginx/default).
+```
+# Setup nginx as reverse server and Let's Encrypt for SSL
 
 sudo apt-get install nginx
-Let's encrypt : https://certbot.eff.org/lets-encrypt/debianbuster-nginx
 
-https://medium.com/@jort.debokx/how-to-setup-https-for-your-iota-full-node-106f829ba2f1
+# Edit config file at /etc/nginx/sites-available/default
+```
 
-https://www.youtube.com/watch?v=nfBhdRCV2kw
+Get SSL Certificate from Let's Encrypt (URL needed):
 
-https://github.com/gohornet/hornet
+Follow newest tutorial on [certbot](https://certbot.eff.org/lets-encrypt/debianbuster-nginx) for SSL certificate.
 
-https://hochrhein-engineering.com/2021/04/18/build-and-run-iota-hornet-node/
 
-https://hornet.docs.iota.org/post_installation/peering
+Configure Hornet:
 
-https://nodesharing.wisewolf.de/ or use autopeering (enable port and plugin) https://github.com/massyu/hornet#autopeering
+```
 
-Query Rest Api:
 
-curl https://address-to-node:port-of-rest-api/api/v1/info
+```
 
-{"data":{"name":"HORNET","version":"1.0.5","isHealthy":true,"networkId":"chrysalis-mainnet","bech32HRP":"iota","minPoWScore":4000,"messagesPerSecond":10,"referencedMessagesPerSecond":11.5,"referencedRate":114.99999999999999,"latestMilestoneTimestamp":1635095521,"latestMilestoneIndex":1541666,"confirmedMilestoneIndex":1541666,"pruningIndex":1540081,"features":["PoW"]}}
+Test Rest API:
 
+```
+>>> curl https://address-to-node:port-of-rest-api/api/v1/info
+
+{"data":
+{"name":"HORNET","version":"1.0.5","isHealthy":true,"networkId":"chrysalis-mainnet","bech32HRP":"iota","minPoWScore":4000,"messagesPerSecond":10,
+"referencedMessagesPerSecond":11.5,"referencedRate":114.99999999999999,"latestMilestoneTimestamp":1635095521,"latestMilestoneIndex":1541666,
+"confirmedMilestoneIndex":1541666,"pruningIndex":1540081,"features":["PoW"]}}
+```
+
+
+## Build application uppon IOTA layer
 
 ### Streams
 
-https://github.com/iotaledger/streams-examples/tree/master/src/examples/single_publisher
 
-https://legacy.docs.iota.org/docs/iota-streams/1.1/overview
-
-https://roadmap.iota.org/streams
-
-https://github.com/adrian-grassl/iota-streams-tutorial
-
-https://github.com/iotaledger/streams-examples/tree/master/src/examples/single_publisher
-
-https://github.com/iot2tangle/Streams-mqtt-gateway
-
-https://github.com/ggreeve/IOTA-Trust-Drinking-Water
-
-### Libraries
-
-https://wiki.iota.org/iota.rs/libraries/python/api_reference#mqtt-apis
-
-https://chrysalis.docs.iota.org/libraries/client
-
-
-# Installation: https://client-lib.docs.iota.org/docs/libraries/python/getting_started/
-# https://client-lib.docs.iota.org/docs/libraries/python/api_reference
 
