@@ -60,7 +60,7 @@ Run:
 
 Or check an example on the tangle:
 
-[Check already attached messasge](https://explorer.iota.org/mainnet/message/497c1b68e5480d07819bbd9c989c8d245fa748667a89fdf7dac884741f493326)
+>[Check already attached messasge](https://explorer.iota.org/mainnet/message/497c1b68e5480d07819bbd9c989c8d245fa748667a89fdf7dac884741f493326)
 
 ## Doc
 
@@ -91,10 +91,21 @@ optional arguments:
 
 ```
 Tested on:
-OS: Debian 10 (Buster)
+OS: Debian 10 (Buster),
+HORNET: 1.0.5
 ```
 
 Install Hornet node:
+
+```
+Hardware recommendation: 
+
+4 cores or 4 vCPU
+8 GB RAM
+SSD storage
+A public IP address
+```
+
 
 ```
 # Install Hornet node
@@ -124,8 +135,91 @@ Follow newest tutorial on [certbot](https://certbot.eff.org/lets-encrypt/debianb
 Configure Hornet:
 
 ```
+>>> sudo nano /var/lib/hornet/config.json
+
+# E.g. configuration for Rest API
+{
+  "restAPI": {
+    "bindAddress": "0.0.0.0:14265",
+    "jwtAuth": {
+      "enabled": false,
+      "salt": "HORNET"
+    },
+    "excludeHealthCheckFromAuth": false,
+    "permittedRoutes": [
+      "/health",
+      "/mqtt",
+      "/api/v1/info",
+      "/api/v1/tips",
+      "/api/v1/messages/:messageID",
+      "/api/v1/messages/:messageID/metadata",
+      "/api/v1/messages/:messageID/raw",
+      "/api/v1/messages/:messageID/children",
+      "/api/v1/messages",
+      "/api/v1/transactions/:transactionID/included-message",
+      "/api/v1/milestones/:milestoneIndex",
+      "/api/v1/milestones/:milestoneIndex/utxo-changes",
+      "/api/v1/outputs/:outputID",
+      "/api/v1/addresses/:address",
+      "/api/v1/addresses/:address/outputs",
+      "/api/v1/addresses/ed25519/:address",
+      "/api/v1/addresses/ed25519/:address/outputs",
+      "/api/v1/treasury"
+    ],
+    "whitelistedAddresses": [
+      "127.0.0.1",
+      "::1"
+    ],
+    
+    # E.g. configuration for Rest API
+    # Create User, Hash and salt
+    # Hash and Salt can be created via command
+    # >>> hornet tool pwd-hash
+    "dashboard": {
+    "bindAddress": "localhost:8081",
+    "dev": false,
+    "auth": {
+      "sessionTimeout": "72h",
+      "username": "<your_user>",
+      "passwordHash": "<your_hash>",
+      "passwordSalt": "<your_salt>"
+    }
+    
+  # Enable  autopeering
+  "node": {
+    "alias": "HORNET mainnet node",
+    "profile": "auto",
+    "disablePlugins": [],
+    "enablePlugins": [
+      "Spammer",
+      "Autopeering"
+    ]
+  },
+
+>>> sudo systemctl restart hornet
+```
+
+Set firewall access (for e.g. ufw):
+
+```
+apt install ufw
+ufw default allow outgoing
+ufw default deny incoming
+ufw allow <Port>
+ufw enable
 
 
+```
+
+Useful and mandatory ports:
+
+```
+<SSH_Port>                 ALLOW       Anywhere # SSH
+443                        ALLOW       Anywhere # SSL
+80                         ALLOW       Anywhere # HTTP
+15600/tcp                  ALLOW       Anywhere # Gossip
+14626/udp                  ALLOW       Anywhere # Autopeering
+<Rest API>                 ALLOW       Anywhere # Rest API (redirect through nginx)
 ```
 
 Test Rest API:
@@ -144,5 +238,10 @@ Test Rest API:
 
 ### Streams
 
+ToDo: Create Pub/Sub system with streams
 
 
+## Source
+
+* [IOTA HORNET Node Installation Party - June 5th, 2020](https://www.youtube.com/watch?v=nfBhdRCV2kw)
+* [IOTA](https://www.iota.org/)
