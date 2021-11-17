@@ -91,18 +91,19 @@ optional arguments:
 
 Setting up a hornet node with reverse proxy and SSL certificate:
 
-  [Klick](hornet-node/)
+ >[Check instructions](hornet-node/)
 
-## Build application uppon IOTA layer
+## Build application uppon the IOTA layer
 
 ### Streams
 
-ToDo: Create Pub/Sub system with streams
+Using IOTA Streams to ensure secure and trustworthy communications between devices.
 
+>[Check instructions](iota-streams/)
 
 ## Source
 
 * [IOTA](https://www.iota.org/)
 * [IOTA Client Docs](https://wiki.iota.org/iota.rs/libraries/python/examples)
 * [Tangle Explorer](https://explorer.iota.org/mainnet/)
-* [IOTA Streams](https://github.com/iotaledger/streams)
+
