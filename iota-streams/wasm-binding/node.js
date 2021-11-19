@@ -2,12 +2,22 @@ const streams = require('./node/streams');
 streams.set_panic_hook();
 
 const fs = require('fs');
-const { type } = require('os');
 const configPath = './config/default.json';
 const config = require(configPath);
 
 
 async function main() {
+    /*
+      Initizialization (Single Branch Pub)
+
+      
+      Loading configuration, generating or loading author
+      author -> announces channel
+
+      ToDo: - Refactor way of loading existing instance -> use import and export
+            - Store pwd etc with stronghold
+            - Store or retrieve index to work with reloaded instances
+    */
     // Read env variable name from config file
     nodeUrlEnv = config.env.nodeUrl; 
     // Get node url from environment, if not defined fall back to default
@@ -35,7 +45,7 @@ async function main() {
       let announcementLinkStr = announcementLink.toString();
       // Update config.json
       config.author.announcementLink = announcementLinkStr;
-      config.author.annLinkMsgIndexHex = annLinkMsgIndexHex;
+      
       writeJsonFile(config, configPath);
     } else {
       // Load existing seed
@@ -60,66 +70,142 @@ async function main() {
     console.log("-----------------------------------------------------------------------")
     // Log node details
     //console.log("IOTA client info:", await client.getInfo());
-    // Get msg meta
-    //let details = await auth.clone().get_client().get_link_details(announcementLink);
-    //console.log("Announce message id: " + details.get_metadata().message_id);
-    //
+    /*
+
+      Generating Subscriber
+
+      Subscriber -> receives annnouncement -> subscribes to channel
+    */
     // Generate subscriber
-    let seed_sub = makeSeed(81);
-    let options = new streams.SendOptions(nodeUrl);
-    let sub = new streams.Subscriber(seed_sub, options);
-    await sub.clone().receive_announcement(announcementLink.copy());
+    sub = generateNewSubscriber(nodeUrl, makeSeed(81));
+    await receiveAnnouncement(announcementLink, sub);
+    // Get Authors Public Key 
     let author_pk = sub.author_public_key();
     console.log("Channel registered by subscriber, author's public key: ", author_pk);
+    
+    subLink = await subscripeToChannel(announcementLink, sub);
+    /*
 
-    // copy state for comparison after reset later
-    let start_state = sub.fetch_state();
-    console.log("Subscribing...");
-    response = await sub.clone().send_subscribe(announcementLink.copy());
-    let subLink = response.link;
-    console.log("Subscription message at: ", subLink.toString());
-    console.log("Subscription message index: " + subLink.toMsgIndexHex());
-    // Author receiving subscription
-    await auth.clone().receive_subscribe(subLink.copy());
+      Author receives subscribtions & sends out keyload (needed to attach messages)
+
+      Subscriber -> receives annnouncement -> subscribes to channel
+    */
+    await receiveSubscription(subLink, auth);
     console.log("Subscription processed");
-
-    // Keyload
+  
     console.log("Sending Keyload");
     response = await auth.clone().send_keyload_for_everyone(announcementLink.copy());
-    let keyloadLink = response.link;
-    console.log("Keyload message at: ", keyloadLink.toString());
-    console.log("Keyload message index: " + keyloadLink.toMsgIndexHex());
-    let n = 0;
-    while(n <= 5) {
-      n++;
-      console.log("Send and Receive");
-      //await auth.clone().sync_state();
+    let keyload_link = response.link;
+    console.log("Keyload message at: ", keyload_link.toString());
+    console.log("Keyload message index: " + keyload_link.toMsgIndexHex());
+    /*
 
-      let publicPayload = toBytes("Public");
-      let maskedPayload = toBytes("Masked");
-      response = await auth
+      Author sends messages 
+
+      Author -> synch state -> build payload in bytes ->
+      sends messages and attaches to link (single branch: attach to last message)
+    */
+    await syncState(auth);
+  
+    let public_payload = toBytes("Public");
+    let masked_payload = toBytes("Masked");
+  
+    console.log("Author Sending tagged packet");
+    response = await auth
       .clone()
-      .send_signed_packet(keyloadLink, publicPayload, maskedPayload);
-      keyloadLink = response.link;
-      
-      console.log("Tag packet at: ", keyloadLink.toString());
-      console.log("Tag packet index: " + keyloadLink.toMsgIndexHex());
-      
-      console.log("\Subscriber fetching next messages");
-      let nextMsgs = await sub.clone().fetch_next_msgs();
-      console.log(nextMsgs);
-      for (var i = 0; i < nextMsgs.length; i++) {
-        console.log("Found a message...");
-        console.log(
-          "Public: ",
-          fromBytes(nextMsgs[i].get_message().get_public_payload()),
-          "\tMasked: ",
-          fromBytes(nextMsgs[i].get_message().get_masked_payload())
-        );
+      .send_tagged_packet(keyload_link, public_payload, masked_payload);
+    let tag_link = response.link;
+    console.log("Tag packet at: ", tag_link.toString());
+    console.log("Tag packet index: " + tag_link.toMsgIndexHex());
+  
+    let msgLink = tag_link;
+    console.log("Author Sending multiple signed packets");
+  
+    for (var x = 0; x < 3; x++) {
+      msgLink = await sendSignedPacket(msgLink, auth, public_payload, masked_payload);
+      console.log("Signed packet at: ", msgLink.toString());
+      console.log("Signed packet index: " + msgLink.toMsgIndexHex());
     }
-  }
-    //////////////////////////////////////////////////////////////////
-    // Local utility functions
+    /*
+
+      Subscriber receives messages
+
+      Subscriber -> fetch messages
+    */
+    console.log("\Subscriber fetching next messages");
+    let next_msgs = await fetchNextMessages(sub);
+    // Print out received msgs
+    for (var i = 0; i < next_msgs.length; i++) {
+      let next = next_msgs[i];
+      for (var j = 0; j < next.length; j++) {
+        console.log("Found a message...");
+        if (next[j].message == null) {
+          console.log("Message undefined");
+        } else {
+          console.log(
+            "Public: ",
+            fromBytes(next[j].message.get_public_payload()),
+            "\tMasked: ",
+            fromBytes(next[j].message.get_masked_payload())
+          );
+        }
+      }
+    }
+    /************************* 
+
+      Local utility functions
+
+     *************************/
+    //
+    async function syncState(sender) {
+      console.log("Syncing state ...");
+      await sender.clone().sync_state();
+    }
+    // Fetch messages for receiver
+    async function fetchNextMessages(receiver) {
+      // Catch timeout, undefined
+      let isMessage = true;
+      let nextMsgs = [];
+      while (isMessage) {
+        let msg = await receiver.clone().fetch_next_msgs();
+        if (msg.length === 0) {
+          isMessage = false;
+        } else {
+          nextMsgs.push(msg);
+        }
+      }
+      return nextMsgs;
+    }
+    // Subscriber receiving announcement
+    async function receiveAnnouncement(announcementLink, subscriber) {
+      await subscriber.clone().receive_announcement(announcementLink.copy());
+    }
+    // Author receiving subscription
+    async function receiveSubscription(subscribtionLink, author) {
+      await author.clone().receive_subscribe(subscribtionLink.copy());
+    }
+    // Publisher sending signed packet
+    async function sendSignedPacket(msgLink, sender, publicPayload, maskedPayload) {
+      response = await sender
+                .clone()
+                .send_signed_packet(msgLink, publicPayload, maskedPayload);
+      return response.link;
+    }
+    // Subscribe to channel -> Return subscribtion link
+    async function subscripeToChannel(announcementLink, subscriber) {
+      // catch timeout
+      console.log("Subscribing...");
+      response = await subscriber.clone().send_subscribe(announcementLink.copy());
+      subLink = response.link
+      console.log("Subscription message at: ", subLink.toString());
+      console.log("Subscription message index: " + subLink.toMsgIndexHex());
+      return subLink;
+    }
+    // Generate Subscriber
+    function generateNewSubscriber(nodeUrl, seed) {
+      const options = new streams.SendOptions(nodeUrl);
+      return new streams.Subscriber(seed, options.clone());
+    }
     // Make bytes out of string
     function toBytes(str) {
       var bytes = [];
