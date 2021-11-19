@@ -1,3 +1,15 @@
+/* singleBranch.js
+*
+*  SPDX-FileCopyrightText: Copyright 2021 Fabbio Protopapa
+*  SPDX-License-Identifier: MIT
+*
+*  ToDo: 
+*        - Refactor way of loading existing instance -> use import and export
+*        - Store pwd etc with stronghold
+*        - Store or retrieve index to work with reloaded instances
+*        - Multi Branch
+*/
+
 const streams = require('./node/streams');
 streams.set_panic_hook();
 
@@ -14,9 +26,7 @@ async function main() {
       Loading configuration, generating or loading author
       author -> announces channel
 
-      ToDo: - Refactor way of loading existing instance -> use import and export
-            - Store pwd etc with stronghold
-            - Store or retrieve index to work with reloaded instances
+      ToDo: 
     */
     // Read env variable name from config file
     nodeUrlEnv = config.env.nodeUrl; 
@@ -139,7 +149,7 @@ async function main() {
       Local utility functions
 
      *************************/
-    //
+    // Show fetched messages
     function showMessages(messages, subName) {
       console.log("Message for " + subName);
       for (var i = 0; i < messages.length; i++) {
