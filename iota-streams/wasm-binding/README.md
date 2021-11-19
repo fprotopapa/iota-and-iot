@@ -66,12 +66,12 @@ npm run serve
 cp <path_to_streams>/streams/bindings/wasm/node{streams_bg.wasm,streams.d.ts,streams.js} <new_path>/node/
 cp <path_to_streams>/streams/bindings/wasm/package.json <new_path>/
 cd <new_path>
-touch node.js
+touch singleBranch.js
 # Install dependencies
 npm install
 
-# Add code to node.js
->>> nano touch node.js
+# Add code to singleBranch.js
+>>> nano touch singleBranch.js
 
 const streams = require("./node/streams");
 
@@ -83,7 +83,7 @@ async function main() {
 }
 
 # And run application
-node node.js
+node singleBranch.js
 ```
 
 ## Source
