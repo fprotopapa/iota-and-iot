@@ -77,20 +77,24 @@ async function main() {
       Subscriber -> receives annnouncement -> subscribes to channel
     */
     // Generate subscriber
-    sub = generateNewSubscriber(nodeUrl, makeSeed(81));
-    await receiveAnnouncement(announcementLink, sub);
+    subA = generateNewSubscriber(nodeUrl, makeSeed(81));
+    subB = generateNewSubscriber(nodeUrl, makeSeed(81));
+    await receiveAnnouncement(announcementLink, subA);
+    await receiveAnnouncement(announcementLink, subB);
     // Get Authors Public Key 
-    let author_pk = sub.author_public_key();
+    let author_pk = subA.author_public_key();
     console.log("Channel registered by subscriber, author's public key: ", author_pk);
     
-    subLink = await subscripeToChannel(announcementLink, sub);
+    subLinkA = await subscripeToChannel(announcementLink, subA);
+    subLinkB = await subscripeToChannel(announcementLink, subB);
     /*
 
       Author receives subscribtions & sends out keyload (needed to attach messages)
 
       Subscriber -> receives annnouncement -> subscribes to channel
     */
-    await receiveSubscription(subLink, auth);
+    await receiveSubscription(subLinkA, auth);
+    await receiveSubscription(subLinkB, auth);
     console.log("Subscription processed");
   
     console.log("Sending Keyload");
@@ -110,17 +114,8 @@ async function main() {
     let public_payload = toBytes("Public");
     let masked_payload = toBytes("Masked");
   
-    console.log("Author Sending tagged packet");
-    response = await auth
-      .clone()
-      .send_tagged_packet(keyload_link, public_payload, masked_payload);
-    let tag_link = response.link;
-    console.log("Tag packet at: ", tag_link.toString());
-    console.log("Tag packet index: " + tag_link.toMsgIndexHex());
-  
-    let msgLink = tag_link;
     console.log("Author Sending multiple signed packets");
-  
+    let msgLink = keyload_link;
     for (var x = 0; x < 3; x++) {
       msgLink = await sendSignedPacket(msgLink, auth, public_payload, masked_payload);
       console.log("Signed packet at: ", msgLink.toString());
@@ -133,30 +128,38 @@ async function main() {
       Subscriber -> fetch messages
     */
     console.log("\Subscriber fetching next messages");
-    let next_msgs = await fetchNextMessages(sub);
+    let messagesA = await fetchNextMessages(subA);
+    showMessages(messagesA, "SubA");
+    let messagesB = await fetchNextMessages(subB);
+    showMessages(messagesB, "SubB");
     // Print out received msgs
-    for (var i = 0; i < next_msgs.length; i++) {
-      let next = next_msgs[i];
-      for (var j = 0; j < next.length; j++) {
-        console.log("Found a message...");
-        if (next[j].message == null) {
-          console.log("Message undefined");
-        } else {
-          console.log(
-            "Public: ",
-            fromBytes(next[j].message.get_public_payload()),
-            "\tMasked: ",
-            fromBytes(next[j].message.get_masked_payload())
-          );
-        }
-      }
-    }
+
     /************************* 
 
       Local utility functions
 
      *************************/
     //
+    function showMessages(messages, subName) {
+      console.log("Message for " + subName);
+      for (var i = 0; i < messages.length; i++) {
+        let next = messages[i];
+        for (var j = 0; j < next.length; j++) {
+          console.log("Found a message...");
+          if (next[j].message == null) {
+            console.log("Message undefined");
+          } else {
+            console.log(
+              "Public: ",
+              fromBytes(next[j].message.get_public_payload()),
+              "\tMasked: ",
+              fromBytes(next[j].message.get_masked_payload())
+            );
+          }
+        }
+      }
+    }
+    // Synch state before publishing
     async function syncState(sender) {
       console.log("Syncing state ...");
       await sender.clone().sync_state();
