@@ -1,5 +1,8 @@
 # iota-and-iot
 
+Clone repository with flag --recursive or --recurse-submodules to get submodules:
+>git clone --recurse-submodules https://github.com/fprotopapa/iota-and-iot.git
+
 ## Description
 
 The project goal is  to enable communication between different IoT participants using the IOTA layer. 
