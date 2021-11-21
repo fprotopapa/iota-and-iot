@@ -23,7 +23,7 @@ Sending and receiving messages using the python client library.
 
 Setting up a hornet node with reverse proxy and SSL certificate:
 
- >[Check instructions](hornet-node/)
+ >[Check instructions](iota-nodes/hornet-node/)
 
 ## Build application uppon the IOTA layer
 
