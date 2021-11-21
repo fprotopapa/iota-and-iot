@@ -25,8 +25,7 @@ async function main() {
       
       Loading configuration, generating or loading author
       author -> announces channel
-
-      ToDo: 
+ 
     */
     // Read env variable name from config file
     nodeUrlEnv = config.env.nodeUrl; 

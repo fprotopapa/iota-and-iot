@@ -3,10 +3,10 @@
     "nodeUrl": "HORNET_NODE_ADDRESS"
   },
   "author": {
-    "seed": "przVuWhjIGCJo2Puw06Zk71g4iHjpEFelVfSARlP2MLOv36gitgBSV3QhyAwBF0I33uqWwEn",
+    "seed": "3PaDUrmvwMz797Yw8QuV3nldJ92VvI5A8Un0z2s3guXvjGMdJ49tevlJMedw7edZyHYm5V9u",
     "setSeed": true,
-    "announcementLink": "f07ed4ac0ee192e131c062ff5331651e5594545de7a0fa98a0811f41f803eaf60000000000000000:797285f123bef3334806d571",
-    "channelAddress": "f07ed4ac0ee192e131c062ff5331651e5594545de7a0fa98a0811f41f803eaf60000000000000000",
+    "announcementLink": "9fde9a1c8c8a69b0fccab47e57fa5ffd517f594beb2fb9e1f10391e822a47f900000000000000000:366c301e2636638661d3e46a",
+    "channelAddress": "9fde9a1c8c8a69b0fccab47e57fa5ffd517f594beb2fb9e1f10391e822a47f900000000000000000",
     "channelType": 0
   }
 }
