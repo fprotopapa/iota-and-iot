@@ -1,0 +1,4 @@
+[submodule "iota-apps/trade-and-supply-chain"]
+	path = iota-apps/trade-and-supply-chain
+	url = git@github.com:fprotopapa/iota-trade-and-supply-chain.git
+	branch = main
