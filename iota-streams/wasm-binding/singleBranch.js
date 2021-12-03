@@ -137,14 +137,47 @@ async function main() {
       console.log("Signed packet index: " + msgLink.toMsgIndexHex());
     }
 
-    states = subA.fetch_state();
-    console.log(states[0].link.toString());
-    console.log(states[0].seqNo);
-    console.log(states[0].branchNo);
- 
-    //console.log(states[0][0][0]);
-    //console.log('link: ',states[0][0].get_link(), 'seq: ', states[0][0].get_seq_no(), 'branch: ', states[0][0].get_branch_no());
-    //console.log('link: ',states[1].get_link(), 'seq: ', states[1].get_seq_no(), 'branch: ', states[1].get_branch_no());
+    // Fetch publisher states (sync to get same results)
+    console.log('States for SubA');
+    //await syncState(subA);
+    let currStates = subA.fetch_state();
+    console.log(currStates);
+    states = {};
+    for (var i=0; i < currStates.length; i++) {
+      states[i] = {};
+      states[i]["id"] = currStates[i].identifier;
+      states[i]["link"] = currStates[i].link.toString();
+      states[i]["seq"] = currStates[i].seqNo;
+      states[i]["branch"] = currStates[i].branchNo;
+    }
+    console.log(JSON.stringify(states));
+    //await syncState(subB);
+    console.log('States for SubB');
+    currStates = subB.fetch_state();
+    console.log(currStates);
+    states = {};
+    for (var i=0; i < currStates.length; i++) {
+      states[i] = {};
+      states[i]["id"] = currStates[i].identifier;
+      states[i]["link"] = currStates[i].link.toString();
+      states[i]["seq"] = currStates[i].seqNo;
+      states[i]["branch"] = currStates[i].branchNo;
+    }
+    console.log(JSON.stringify(states));
+    console.log('States for Auth');
+    //await syncState(auth);
+    currStates = auth.fetch_state();
+    console.log(currStates);
+    states = {};
+    for (var i=0; i < currStates.length; i++) {
+      states[i] = {};
+      states[i]["id"] = currStates[i].identifier;
+      states[i]["link"] = currStates[i].link.toString();
+      states[i]["seq"] = currStates[i].seqNo;
+      states[i]["branch"] = currStates[i].branchNo;
+    }
+    console.log(JSON.stringify(states));
+  
     /*
 
       Subscriber receives messages
