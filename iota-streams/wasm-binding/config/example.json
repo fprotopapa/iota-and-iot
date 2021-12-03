@@ -4,7 +4,7 @@
   },
   "author": {
     "seed": null,
-    "setSeed": false,
+    "setSeed": true,
     "announcementLink": null,
     "channelAddress": null,
     "channelType": null
