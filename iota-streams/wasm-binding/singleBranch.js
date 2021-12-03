@@ -119,12 +119,18 @@ async function main() {
       sends messages and attaches to link (single branch: attach to last message)
     */
     await syncState(auth);
-  
+
     let public_payload = toBytes("Public");
     let masked_payload = toBytes("Masked");
+
+    console.log("Author sending tagged packet");
+    response = await auth.clone().send_tagged_packet(keyload_link, public_payload, masked_payload);
+    let tag_link = response.link;
+    console.log("Tag packet at: ", tag_link.toString());
+    console.log("Tag packet index: " + tag_link.toMsgIndexHex());
   
     console.log("Author Sending multiple signed packets");
-    let msgLink = keyload_link;
+    let msgLink = tag_link;
     for (var x = 0; x < 3; x++) {
       msgLink = await sendSignedPacket(msgLink, auth, public_payload, masked_payload);
       console.log("Signed packet at: ", msgLink.toString());
@@ -157,8 +163,11 @@ async function main() {
           console.log("Found a message...");
           if (next[j].message == null) {
             console.log("Message undefined");
+            console.log("Address: ", next[j].link.toString());
           } else {
             console.log(
+              "Address: ",
+              next[j].link.toString(),
               "Public: ",
               fromBytes(next[j].message.get_public_payload()),
               "\tMasked: ",
