@@ -136,6 +136,15 @@ async function main() {
       console.log("Signed packet at: ", msgLink.toString());
       console.log("Signed packet index: " + msgLink.toMsgIndexHex());
     }
+
+    states = subA.fetch_state();
+    console.log(states[0].link.toString());
+    console.log(states[0].seqNo);
+    console.log(states[0].branchNo);
+ 
+    //console.log(states[0][0][0]);
+    //console.log('link: ',states[0][0].get_link(), 'seq: ', states[0][0].get_seq_no(), 'branch: ', states[0][0].get_branch_no());
+    //console.log('link: ',states[1].get_link(), 'seq: ', states[1].get_seq_no(), 'branch: ', states[1].get_branch_no());
     /*
 
       Subscriber receives messages
