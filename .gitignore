@@ -1,6 +1,7 @@
 # ignore secrets
 secrets/
 ignore/
+**/binary_instance/*.bin
 
 # ignore iota streams repo
 streams/
