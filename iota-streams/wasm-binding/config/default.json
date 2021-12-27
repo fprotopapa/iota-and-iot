@@ -1,12 +1,9 @@
 {
   "env": {
-    "nodeUrl": "HORNET_NODE_ADDRESS"
+    "nodeUrl": "HORNET_NODE_ADDRESS",
+    "authorPasswd": "AUTHOR_PASSWD"
   },
   "author": {
-    "seed": "PchdIL4rtZhHFwOuYb6GTLclyxJl4BBobChWHDffuBOveIeaYnAjH2xPT2eV8IawU1ljVWZx",
-    "setSeed": true,
-    "announcementLink": "7595e78340aad9bcc686afd2bcbbfbc8be6a9d7cecf41a76801f5d58e24cc36c0000000000000000:450dd2369d1732df290e615e",
-    "channelAddress": "7595e78340aad9bcc686afd2bcbbfbc8be6a9d7cecf41a76801f5d58e24cc36c0000000000000000",
-    "channelType": 0
+    "setSeed": false
   }
 }

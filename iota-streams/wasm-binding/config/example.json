@@ -1,12 +1,9 @@
 {
   "env": {
-    "nodeUrl": "HORNET_NODE_ADDRESS"
+    "nodeUrl": "HORNET_NODE_ADDRESS",
+    "authorPasswd": "AUTHOR_PASSWD"
   },
   "author": {
-    "seed": null,
-    "setSeed": true,
-    "announcementLink": null,
-    "channelAddress": null,
-    "channelType": null
+    "setSeed": true
   }
 }
