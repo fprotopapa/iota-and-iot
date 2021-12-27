@@ -4,6 +4,6 @@
     "authorPasswd": "AUTHOR_PASSWD"
   },
   "author": {
-    "setSeed": false
+    "setSeed": true
   }
 }

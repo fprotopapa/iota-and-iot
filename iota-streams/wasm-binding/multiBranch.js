@@ -5,7 +5,7 @@
 *
 *  ToDo: 
 *        - Store or retrieve index to work with reloaded instances
-*        - Multi Branch
+*        - Multi Branch (does it work?)
 */
 
 const streams = require('./node/streams');
@@ -45,7 +45,7 @@ async function main() {
     dirPath = path.join(dirWD, dirbinary);
     var files = fs.readdirSync(dirPath);
     foundInstances = files.filter(e => path.extname(e) === '.bin');
-    console.log(foundInstances);
+    //console.log(foundInstances);
     // Generate author
     // Check for existing author seed
     let isAuthorInstance = false;
@@ -68,10 +68,86 @@ async function main() {
       } else {
         // Load existing seed
         impAuthor = new Uint8Array(fs.readFileSync(path.join(dirPath, 'author.bin')));
-        streams.Author.import(streams.StreamsClient.fromClient(client), 
+        var auth = streams.Author.import(streams.StreamsClient.fromClient(client), 
                                                         impAuthor, authorPasswd);
         console.log("Loaded author instance from binary.");
       }
+    annLinkStr = auth.announcementLink();
+    console.log("Announcement Link: ", annLinkStr);
+    // Share announcement link off tangle
+    // ----------------------------------
+    // Generate Subscriber
+    subA = generateNewSubscriber(nodeUrl, makeSeed(81));
+    subB = generateNewSubscriber(nodeUrl, makeSeed(81));
+    let announcementLink = streams.Address.parse(annLinkStr);
+    await receiveAnnouncement(announcementLink, subA);
+    await receiveAnnouncement(announcementLink, subB);
+    subLinkA = await subscripeToChannel(announcementLink, subA);
+    subPKA = subA.get_public_key();
+    subLinkB = await subscripeToChannel(announcementLink, subB);
+    subPKB = subB.get_public_key();
+    console.log("Subscribed to channel");
+    // Share subscribtion link and Pub Key off tangle
+    // ----------------------------------
+    // Author receiving subscribtion
+    await receiveSubscription(subLinkA, auth);
+    await receiveSubscription(subLinkB, auth);
+    console.log("Subscription processed");
+    // Generate keyload message
+    const keysA = new streams.PublicKeys();
+    const keysB = new streams.PublicKeys();
+    keysA.add(subPKA);
+    keysB.add(subPKB);
+    let idsA = streams.PskIds.new();
+    let idsB = streams.PskIds.new();
+    responseA = await auth.clone().send_keyload(announcementLink.copy(), idsA, keysA);
+    responseB = await auth.clone().send_keyload(announcementLink.copy(), idsB, keysB);
+    let keyloadLinkA = responseA.link;
+    let keyloadLinkB = responseB.link;
+    let keyloadLinkAStr = keyloadLinkA.toString();
+    let keyloadLinkBStr = keyloadLinkB.toString();
+    let sequenceLinkA = responseA.seq_link; // can be undefined
+    let sequenceLinkB = responseB.seq_link; // can be undefined
+    console.log(
+        `\nSent Keyload for Sub A: ${keyloadLinkAStr}, seq: ${sequenceLinkA}`
+      );
+    console.log(
+        `\nSent Keyload for Sub B: ${keyloadLinkBStr}, seq: ${sequenceLinkB}`
+      );
+    // Share Keyload and Sequence link off tangle
+    // -----------------------------------------
+    // All set-up and ready for messaging
+    await syncState(subA);
+    await syncState(subB);
+    let public_payload = toBytes("Public");
+    let masked_payload = toBytes("Masked");
+    console.log("Subscriber A sending signed packet");
+    let msgLinkA = keyloadLinkA;
+    msgLinkA = await sendSignedPacket(msgLinkA, subA, public_payload, masked_payload);
+    console.log("A: Signed packet at: ", msgLinkA.toString());
+    console.log("A: Signed packet index: " + msgLinkA.toMsgIndexHex());
+    console.log("--------------------------------------------");
+    let msgLinkB = keyloadLinkB;
+    msgLinkB = await sendSignedPacket(msgLinkB, subB, public_payload, masked_payload);
+    console.log("B: Signed packet at: ", msgLinkB.toString());
+    console.log("B: Signed packet index: " + msgLinkB.toMsgIndexHex());
+    console.log("--------------------------------------------");
+    let messagesA = await fetchNextMessages(subA);
+    let messagesB = await fetchNextMessages(subB);
+    showMessages(messagesA, "SubA");
+    showMessages(messagesB, "SubB");
+    // console.log('Fetch states for Auth');
+    // currStates = auth.fetch_state();
+    // console.log(currStates);
+    // states = {};
+    // for (var i=0; i < currStates.length; i++) {
+    //   states[i] = {};
+    //   states[i]["id"] = currStates[i].identifier;
+    //   states[i]["link"] = currStates[i].link.toString();
+    //   states[i]["seq"] = currStates[i].seqNo;
+    //   states[i]["branch"] = currStates[i].branchNo;
+    // }
+    // console.log(JSON.stringify(states));
     /************************* 
 
       Local utility functions
@@ -182,6 +258,21 @@ async function main() {
           }
           return seed;
         }
+
+     async function tryFetch(sub, caller){
+        let retrieved = await sub.clone().fetch_next_msgs();
+        try {
+            retrieved.map((r) => {
+            const payload = JSON.stringify(
+                fromBytes(r.get_message().get_masked_payload())
+            );
+            console.log(`Received message for: ${caller} - ${payload}`);
+            return null;
+            });
+        } catch (e) {
+            console.log("error");
+        }
+        };
     }
 
     main();

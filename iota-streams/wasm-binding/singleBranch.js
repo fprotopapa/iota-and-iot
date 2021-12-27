@@ -4,19 +4,17 @@
 *  SPDX-License-Identifier: MIT
 *
 *  ToDo: 
-*        - Refactor way of loading existing instance -> use import and export
-*        - Store pwd etc with stronghold
-*        - Store or retrieve index to work with reloaded instances
-*        - Multi Branch
+*  Clean up
 */
 
 const streams = require('./node/streams');
 streams.set_panic_hook();
 
 const fs = require('fs');
+const path = require('path');
 const configPath = './config/default.json';
 const config = require(configPath);
-
+const sendAuthor = false;
 
 async function main() {
     /*
@@ -36,39 +34,50 @@ async function main() {
     }
     // Build client from node url
     const client = await new streams.ClientBuilder().node(nodeUrl).build();
-    //
+    // Load author password from env
+    authorPasswdEnv = config.env.authorPasswd;
+    let authorPasswd = process.env[authorPasswdEnv];
+    if (authorPasswd === undefined) {
+        authorPasswd = '123456';
+    }
+    // Get list of saved instances
+    dirWD = path.resolve(__dirname);
+    dirbinary = 'binary_instance';
+    dirPath = path.join(dirWD, dirbinary);
+    var files = fs.readdirSync(dirPath);
+    foundInstances = files.filter(e => path.extname(e) === '.bin');
+    //console.log(foundInstances);
     // Generate author
     // Check for existing author seed
-    if ((config.author.seed === null) || config.author.setSeed) {
+    let isAuthorInstance = false;
+    if (foundInstances.filter(e => path.basename(e) === 'author.bin').length) {
+        isAuthorInstance = true;
+    }
+    if (!isAuthorInstance || config.author.setSeed) {
       // Generate new seed and save to config.json
       var seed = makeSeed(81);
       config.author.seed = seed;
       console.log("New seed for author created.");
       // Generating author for new channel
-      var auth = streams.Author.fromClient(streams.StreamsClient.fromClient(client), seed, streams.ChannelType.SingleBranch);
-      config.author.channelAddress = auth.channel_address();
-      config.author.channelType = streams.ChannelType.SingleBranch;
+      var auth = streams.Author.fromClient(streams.StreamsClient.fromClient(client), 
+                                            seed, streams.ChannelType.SingleBranch);
+
       // Send announcment and get link
       let response = await auth.clone().send_announce();
-      let announcementLink = response.link;
-      let announcementLinkStr = announcementLink.toString();
-      // Update config.json
-      config.author.announcementLink = announcementLinkStr;
-      
-      writeJsonFile(config, configPath);
+      // Export author instance and save to encrypted binary
+      let expAuthor = auth.clone().export(authorPasswd);
+      fs.writeFileSync(path.join(dirPath, 'author.bin'), expAuthor, 'binary');
+      console.log("Author instance exported.");
     } else {
       // Load existing seed
-      var seed = config.author.seed;
-      console.log("Existing seed for author loaded.");
-      // Generating author for existing channel
-      let announcementLinkStr = config.author.announcementLink;
-      let announcementLink = streams.Address.parse(announcementLinkStr)
-      let channelType = config.author.channelType;
-      const options = new streams.SendOptions(nodeUrl);
-      // Recover author !! announcementLink is freed !!
-      var auth = await streams.Author.recover(seed, announcementLink, channelType, options);  
+      impAuthor = new Uint8Array(fs.readFileSync(path.join(dirPath, 'author.bin')));
+      var auth = streams.Author.import(streams.StreamsClient.fromClient(client), 
+                                                      impAuthor, authorPasswd);
+      console.log("Loaded author instance from binary.");
     }
-    let announcementLink = streams.Address.parse(auth.announcementLink())
+    annLinkStr = auth.announcementLink();
+    console.log("Announcement Link: ", annLinkStr);
+    let announcementLink = streams.Address.parse(annLinkStr)
     // Log Channel details
     console.log("-----------------------------------------------------------------------")
     console.log("Channel address: ", auth.channel_address());
@@ -111,85 +120,99 @@ async function main() {
     let keyload_link = response.link;
     console.log("Keyload message at: ", keyload_link.toString());
     console.log("Keyload message index: " + keyload_link.toMsgIndexHex());
+    console.log("Public Key Sub A : ", subA.get_public_key());
+    console.log("Public Key Sub B : ", subB.get_public_key());
+    console.log("Public Key Author: ", auth.get_public_key());
+    if (sendAuthor) {
+      /*
+
+        Author sends messages 
+
+        Author -> synch state -> build payload in bytes ->
+        sends messages and attaches to link (single branch: attach to last message)
+      */
+        await syncState(auth);
+
+        let public_payload = toBytes("Public");
+        let masked_payload = toBytes("Masked");
+    
+        console.log("Author sending tagged packet");
+        response = await auth.clone().send_tagged_packet(keyload_link, public_payload, masked_payload);
+        let tag_link = response.link;
+        console.log("Tag packet at: ", tag_link.toString());
+        console.log("Tag packet index: " + tag_link.toMsgIndexHex());
+      
+        console.log("Author Sending multiple signed packets");
+        let msgLink = tag_link;
+        for (var x = 0; x < 3; x++) {
+          msgLink = await sendSignedPacket(msgLink, auth, public_payload, masked_payload);
+          console.log("Signed packet at: ", msgLink.toString());
+          console.log("Signed packet index: " + msgLink.toMsgIndexHex());
+        }
+    } else {
     /*
 
-      Author sends messages 
+      Subscriber sending messages 
 
-      Author -> synch state -> build payload in bytes ->
+      Sub -> synch state -> build payload in bytes ->
       sends messages and attaches to link (single branch: attach to last message)
     */
-    await syncState(auth);
+     // await syncState(subA);
 
-    let public_payload = toBytes("Public");
-    let masked_payload = toBytes("Masked");
-
-    console.log("Author sending tagged packet");
-    response = await auth.clone().send_tagged_packet(keyload_link, public_payload, masked_payload);
-    let tag_link = response.link;
-    console.log("Tag packet at: ", tag_link.toString());
-    console.log("Tag packet index: " + tag_link.toMsgIndexHex());
-  
-    console.log("Author Sending multiple signed packets");
-    let msgLink = tag_link;
-    for (var x = 0; x < 3; x++) {
-      msgLink = await sendSignedPacket(msgLink, auth, public_payload, masked_payload);
-      console.log("Signed packet at: ", msgLink.toString());
-      console.log("Signed packet index: " + msgLink.toMsgIndexHex());
+      let public_payloadA = toBytes("PublicA");
+      let masked_payloadA = toBytes("MaskedA");
+      let public_payloadB = toBytes("PublicB");
+      let masked_payloadB = toBytes("MaskedB");
+    
+      console.log("SubA Sending multiple signed packets");
+      // response = await subA.clone().send_tagged_packet(keyload_link, 
+      //                                                 public_payloadA, masked_payloadA);
+      // let msgLink = response.link;
+      let msgLink = await fetchState(subA, 'subA');//keyload_link;
+      for (var x = 0; x < 1; x++) {
+        msgLink = await sendSignedPacket(msgLink, subA, public_payloadA, masked_payloadA);
+        console.log("Signed packet at: ", msgLink.toString());
+        console.log("Signed packet index: " + msgLink.toMsgIndexHex());
+      }
+      await syncState(subB);
+      console.log("SubB Sending multiple signed packets");
+      // response = await subB.clone().send_tagged_packet(msgLink, 
+      //                                                 public_payloadB, masked_payloadB);
+      // msgLink = response.link;
+      //let msgLink = keyload_link;
+      msgLink = await fetchState(subB, 'subB');
+      for (var x = 0; x < 1; x++) {
+        msgLink = await sendSignedPacket(msgLink, subB, public_payloadB, masked_payloadB);
+        console.log("Signed packet at: ", msgLink.toString());
+        console.log("Signed packet index: " + msgLink.toMsgIndexHex());
+      }
     }
 
-    // Fetch publisher states (sync to get same results)
-    console.log('States for SubA');
-    //await syncState(subA);
-    let currStates = subA.fetch_state();
-    console.log(currStates);
-    states = {};
-    for (var i=0; i < currStates.length; i++) {
-      states[i] = {};
-      states[i]["id"] = currStates[i].identifier;
-      states[i]["link"] = currStates[i].link.toString();
-      states[i]["seq"] = currStates[i].seqNo;
-      states[i]["branch"] = currStates[i].branchNo;
-    }
-    console.log(JSON.stringify(states));
-    //await syncState(subB);
-    console.log('States for SubB');
-    currStates = subB.fetch_state();
-    console.log(currStates);
-    states = {};
-    for (var i=0; i < currStates.length; i++) {
-      states[i] = {};
-      states[i]["id"] = currStates[i].identifier;
-      states[i]["link"] = currStates[i].link.toString();
-      states[i]["seq"] = currStates[i].seqNo;
-      states[i]["branch"] = currStates[i].branchNo;
-    }
-    console.log(JSON.stringify(states));
-    console.log('States for Auth');
-    //await syncState(auth);
-    currStates = auth.fetch_state();
-    console.log(currStates);
-    states = {};
-    for (var i=0; i < currStates.length; i++) {
-      states[i] = {};
-      states[i]["id"] = currStates[i].identifier;
-      states[i]["link"] = currStates[i].link.toString();
-      states[i]["seq"] = currStates[i].seqNo;
-      states[i]["branch"] = currStates[i].branchNo;
-    }
-    console.log(JSON.stringify(states));
-  
     /*
 
       Subscriber receives messages
 
       Subscriber -> fetch messages
     */
+   if (sendAuthor) {
     console.log("\Subscriber fetching next messages");
     let messagesA = await fetchNextMessages(subA);
     showMessages(messagesA, "SubA");
     let messagesB = await fetchNextMessages(subB);
     showMessages(messagesB, "SubB");
     // Print out received msgs
+   } else {
+    /*
+
+      Author receives messages
+
+      Author -> fetch messages
+    */
+      console.log("\Author fetching next messages");
+      let messages = await fetchNextMessages(auth);
+      console.log(messages);
+      showMessages(messages, "Author");
+   }
 
     /************************* 
 
@@ -218,6 +241,24 @@ async function main() {
           }
         }
       }
+    }
+    // Fetch state
+    async function fetchState(caller, name) {
+      // Fetch publisher states (sync to get same results)
+      console.log('States for ', name);
+      await syncState(caller);
+      let currStates = caller.fetch_state();
+      console.log(currStates);
+      states = {};
+      for (var i=0; i < currStates.length; i++) {
+        states[i] = {};
+        states[i]["id"] = currStates[i].identifier;
+        states[i]["link"] = currStates[i].link.toString();
+        states[i]["seq"] = currStates[i].seqNo;
+        states[i]["branch"] = currStates[i].branchNo;
+      }
+      console.log(JSON.stringify(states));
+      return streams.Address.parse(states[0]["link"]);
     }
     // Synch state before publishing
     async function syncState(sender) {
