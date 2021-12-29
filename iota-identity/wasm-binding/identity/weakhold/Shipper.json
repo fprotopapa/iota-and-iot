@@ -1,0 +1,16 @@
+{
+    "subject": "Shipper",
+    "did": "did:iota:58BbDkE8V2yeTaJzBCJFMc6MLKJv1tUycwdKanuA4Nbf",
+    "messageId": "a2ad788dd27a75c995b7b5277a670db204f7aa546645235af41dc71424823795",
+    "explorerUrl": "https://explorer.iota.org/mainnet/message/a2ad788dd27a75c995b7b5277a670db204f7aa546645235af41dc71424823795",
+    "authKey": {
+        "type": "ed25519",
+        "public": "Etc3omQTZgN4K5x1y9MGBqARuPDepVdF7wkKC3tXeBDT",
+        "secret": "3CEsae9y6EJpYCX5qPUPkfURd9J1bCe9i8YUwDpdmqnD"
+    },
+    "verifKey": {
+        "type": "ed25519",
+        "public": "H1EWTPdYP4VsgxK3yBxkxeYF4x1eiapN1NPBFsaG16pA",
+        "secret": "2fUtaMZx6gL9Nh7j87x8mfYSrHSgPgqU91FT5whd93tK"
+    }
+}

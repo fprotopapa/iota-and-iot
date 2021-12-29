@@ -1,0 +1,16 @@
+{
+    "subject": "Cargo",
+    "did": "did:iota:GwPggwtyNfq9itszJfDkMeNCNWoGT6UC4qcGqWDKgsTN",
+    "messageId": "158f15b673c207f18bbcd4cf59c8b3dddeb4a91332c050dfcae13af3f6d68ef3",
+    "explorerUrl": "https://explorer.iota.org/mainnet/message/158f15b673c207f18bbcd4cf59c8b3dddeb4a91332c050dfcae13af3f6d68ef3",
+    "authKey": {
+        "type": "ed25519",
+        "public": "7MDbjJUPkVqnkC9AqUjHYqGrf3MR91RakkqYpvTYuLFY",
+        "secret": "FN2mcYAbwAvkKHLBN3wufC3oVPCZZUWoMuxXsCVCzm3D"
+    },
+    "verifKey": {
+        "type": "ed25519",
+        "public": "4BXscdbTyTW6H1S4BXxpHzdQxHMmo1fUa5BDBC2WKnPU",
+        "secret": "5yKSk7w8ajuaTW1S8qnNKnwHfRzFCbVXX6WkNLBGiWnq"
+    }
+}

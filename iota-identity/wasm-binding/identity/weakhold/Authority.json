@@ -1,0 +1,48 @@
+{
+    "subject": "Authority",
+    "did": "did:iota:4MJ7QP1pWtkgxJEkLpQcEqECVh6RW3CoWksNtrKY7cnD",
+    "messageId": "2d1cec2192e820bd917a9bde477c4d39cc527277e8570b3b2db25e7c4f7f740a",
+    "explorerUrl": "https://explorer.iota.org/mainnet/message/2d1cec2192e820bd917a9bde477c4d39cc527277e8570b3b2db25e7c4f7f740a",
+    "authKey": {
+        "type": "ed25519",
+        "public": "8XGtkH5RGTLiB7cijCwadZzCLapLkKZ3WAZ6JJSV4Tk2",
+        "secret": "54jwoHTWMS9QEtUhtsvH4VABApjW37uifTTE5G4hTVvo"
+    },
+    "verifKey": {
+        "type": "ed25519",
+        "keys": [
+            {
+                "public": "J77cqnrgmKHwkGyRohqzFKgdD1QL7EYRpUpm5pRZ7wuP",
+                "secret": "G2X76pwEKfuvkGzvHezV4tiGkFy9Lftb4Lh11rBxmyRR"
+            },
+            {
+                "public": "BHoy2LsxwJE4NFufZM8p8vvedEVYsU8tNH9T4Z8Uf1C6",
+                "secret": "4bZDxKsvpn7gmgGPr1Pu2ppzqXVjgd8BUwgHLDS5CLfK"
+            },
+            {
+                "public": "Dx1jtv28C8DSu6kdZCwfoSDVW8VV55CYTANXP5dFrM48",
+                "secret": "GNUJFUQZ2J4KTsc99kZzdeXEdpvHJjAiVk68bQL67yDZ"
+            },
+            {
+                "public": "92p2613ujKSJ3rdzj7mq4pUEV74uRN2dveyQa9yKwySh",
+                "secret": "4pteLwrrrPoZ4CP5guBCpXtGuawCJDmvenE6T2e1G79A"
+            },
+            {
+                "public": "CEUjBrNMzj67RN8x4N7bpjkXiY8osZY2ezGTSbeKy4uR",
+                "secret": "AjPpjcwqzHYs8JfiSM4g7n41fbUdtC9dti7MhThAtoXL"
+            },
+            {
+                "public": "8SsKSEau9Eh5avsz53G4VEKS4S1w6DQDJAh2h8xJFMSz",
+                "secret": "98XzVVfpA56V6m8wfEGeVTAuhm1ZwKWv5jBYWegJHC5A"
+            },
+            {
+                "public": "5Ex23wLnWUDu41gPzguPZM7zu7uZtSXUi9Q5aiNeG4yC",
+                "secret": "D5iTFhrsy2CYdzEqHRSF8CmKjfTYq3XdgjecDwVAcebG"
+            },
+            {
+                "public": "S1FKhTsKYqjbF1LVRena44h5sps1sdFKUQkk6mxEzhm",
+                "secret": "1JTutiAyQW2wpvZcNRnisemMPh1Kh7GMfnJBYrYDH91"
+            }
+        ]
+    }
+}

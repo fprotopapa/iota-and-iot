@@ -1,0 +1,16 @@
+{
+    "subject": "Author",
+    "did": "did:iota:2zSz9T7ZpHgaZfhVZkwZsDv8YdBGYe1v4jF3iUrGBa4q",
+    "messageId": "b258018f1dc125235c9e652ef48d710d102a5101da5ed7db84d191b11281b340",
+    "explorerUrl": "https://explorer.iota.org/mainnet/message/b258018f1dc125235c9e652ef48d710d102a5101da5ed7db84d191b11281b340",
+    "authKey": {
+        "type": "ed25519",
+        "public": "EXbmiQu5KzgcezTGLRv1BpzG5QpUDLUvRm37kJz1biup",
+        "secret": "3AU4VSmGRRnXS41KKwtUFGVhcVY6qnFa3GuvpJqjHeo4"
+    },
+    "verifKey": {
+        "type": "ed25519",
+        "public": "68W4JRQk4oi5Y5BFqYFd1fRbXA6CrZeuH2kcCdCJEGmS",
+        "secret": "CpyNma7PbxCwzFu3d5K9H983ZsHHvAvHhdTYQ5NBCx8R"
+    }
+}

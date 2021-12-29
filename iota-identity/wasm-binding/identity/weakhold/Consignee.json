@@ -1,0 +1,16 @@
+{
+    "subject": "Consignee",
+    "did": "did:iota:J8d1kq9BkmthvNhUGGDmmZsACLC9qjVpit1Fv6sRRQUp",
+    "messageId": "53fff1e6397449f12d1321daea61c1dc4e4fac5835520d98a20197f4e4be0058",
+    "explorerUrl": "https://explorer.iota.org/mainnet/message/53fff1e6397449f12d1321daea61c1dc4e4fac5835520d98a20197f4e4be0058",
+    "authKey": {
+        "type": "ed25519",
+        "public": "JD37TXjGeuE9UmBtxeQfK3cdAAFe2j9wUmWESpWeMrtS",
+        "secret": "6thRsqdvbBSxrbNEruQ3G7jLo8DoEddAYTbdSi4sE4ji"
+    },
+    "verifKey": {
+        "type": "ed25519",
+        "public": "6NBSrqspGo9JmRMrtQEWVF4CxZN6uzyYDFj5fr33fkvT",
+        "secret": "BVLd7xM3aHgMkX6oBgCccsRhgDXa2KivbtnRJr9hi8vi"
+    }
+}

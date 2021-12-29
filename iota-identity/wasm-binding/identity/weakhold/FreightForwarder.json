@@ -1,0 +1,16 @@
+{
+    "subject": "FreightForwarder",
+    "did": "did:iota:A6YjnwXyhH5s6oWUZfoLfw2kdYmZHEwiKv2wCTbSckjR",
+    "messageId": "7d66f26569805196d09917ea14519949453848469a482986b8fb17f4f3ecdea2",
+    "explorerUrl": "https://explorer.iota.org/mainnet/message/7d66f26569805196d09917ea14519949453848469a482986b8fb17f4f3ecdea2",
+    "authKey": {
+        "type": "ed25519",
+        "public": "5SZSKvK2CRmsy6fTUpMmUgp7Rik9Y8TPpaUKqcb1GBqB",
+        "secret": "DP2wL3KBCj64k1cMLFHSk8qeA4NwTPy26obuLgNEfjHw"
+    },
+    "verifKey": {
+        "type": "ed25519",
+        "public": "5y7tPedxfsoeBPVChC438HLNhp8qdjWTML4tKCLsjBJE",
+        "secret": "HvnRuzBm4qkaBHbKz4kfiYrrseDLLkkZ3hGM4XSe5LHU"
+    }
+}
