@@ -1,0 +1,30 @@
+{
+    "@context": "https://www.w3.org/2018/credentials/v1",
+    "type": "VerifiablePresentation",
+    "verifiableCredential": {
+        "@context": "https://www.w3.org/2018/credentials/v1",
+        "id": "http://somenicelink.com/",
+        "type": [
+            "VerifiableCredential",
+            "Projekt Badawczy"
+        ],
+        "credentialSubject": {
+            "id": "did:iota:A6YjnwXyhH5s6oWUZfoLfw2kdYmZHEwiKv2wCTbSckjR",
+            "code": 333,
+            "name": "FreightForwarder"
+        },
+        "issuer": "did:iota:4MJ7QP1pWtkgxJEkLpQcEqECVh6RW3CoWksNtrKY7cnD",
+        "issuanceDate": "2021-12-29T18:02:22Z",
+        "proof": {
+            "type": "MerkleKeySignature2021",
+            "verificationMethod": "#CompanyVerifications",
+            "signatureValue": "Dx1jtv28C8DSu6kdZCwfoSDVW8VV55CYTANXP5dFrM48.1117uB5putmAmRpFADmGhrJWopfgyJ6ouE7sNaJoEst87nwKSdX5RyP73qtBuPLv3BL4AJpVkY3BP4F5z7caQMaFPAEYudgaToz1nxUPMwRNT8uyJFfaDZCiNX16p46DehHzjCrAdv1.poeTpF3ogzcefMDfARwnk2kBDxDiePq7CveUB4VnPxTzETBbqMKocCaMAQ6MaLtmiGtYggvusdYmBpMvsyiJKhs"
+        }
+    },
+    "holder": "did:iota:A6YjnwXyhH5s6oWUZfoLfw2kdYmZHEwiKv2wCTbSckjR",
+    "proof": {
+        "type": "JcsEd25519Signature2020",
+        "verificationMethod": "#FFPresentation",
+        "signatureValue": "y6Jn5HtLDfrxiABysoQx8CyCt325uxA3QAjuQmmXCYEfjVffRyRe2WDAFCAVfjN9xTemZuqcHLKKagv8L8VwQqS"
+    }
+}

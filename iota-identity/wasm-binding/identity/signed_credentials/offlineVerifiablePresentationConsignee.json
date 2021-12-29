@@ -1,0 +1,30 @@
+{
+    "@context": "https://www.w3.org/2018/credentials/v1",
+    "type": "VerifiablePresentation",
+    "verifiableCredential": {
+        "@context": "https://www.w3.org/2018/credentials/v1",
+        "id": "http://somenicelink.com/",
+        "type": [
+            "VerifiableCredential",
+            "Projekt Badawczy"
+        ],
+        "credentialSubject": {
+            "id": "did:iota:J8d1kq9BkmthvNhUGGDmmZsACLC9qjVpit1Fv6sRRQUp",
+            "code": 444,
+            "name": "Consignee"
+        },
+        "issuer": "did:iota:4MJ7QP1pWtkgxJEkLpQcEqECVh6RW3CoWksNtrKY7cnD",
+        "issuanceDate": "2021-12-29T18:02:23Z",
+        "proof": {
+            "type": "MerkleKeySignature2021",
+            "verificationMethod": "#CompanyVerifications",
+            "signatureValue": "92p2613ujKSJ3rdzj7mq4pUEV74uRN2dveyQa9yKwySh.1119tGE7dFDzvWgpWVizM4buW6ie3AyRAFbbPjxDSxiFMK5xemA7xDiWV8Md3Yr6GH3Grhc9yhk2YKymrenCxLqNeys99xjue4kLhPyQP8BDdb6w2Pa6s1dbmnEWpXKx6kGQNms5Rgu.4bSDCEtSwrPqwpfcf2CYCewQXQeJ847jyUoF2L2TegoAUjmws5LUyWq8ePwKrixhD61vSnALvJCnsP8tSXTroNt4"
+        }
+    },
+    "holder": "did:iota:J8d1kq9BkmthvNhUGGDmmZsACLC9qjVpit1Fv6sRRQUp",
+    "proof": {
+        "type": "JcsEd25519Signature2020",
+        "verificationMethod": "#ConsigneePresentation",
+        "signatureValue": "3g8TMazTWwGDUrbkLFU8m3yTcaQtCueCkQL6WMV7gsEYxn84G1BFiaTCjBEU62bhnPr1ZZXoUKjE1Mhr9JpzbqbL"
+    }
+}
