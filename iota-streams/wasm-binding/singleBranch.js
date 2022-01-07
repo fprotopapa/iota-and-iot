@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const configPath = './config/default.json';
 const config = require(configPath);
-const sendAuthor = false;
+const sendAuthor = true;
 
 async function main() {
     /*
@@ -97,14 +97,17 @@ async function main() {
     // Generate subscriber
     subA = generateNewSubscriber(nodeUrl, makeSeed(81));
     subB = generateNewSubscriber(nodeUrl, makeSeed(81));
+    subC = generateNewSubscriber(nodeUrl, makeSeed(81));
     await receiveAnnouncement(announcementLink, subA);
     await receiveAnnouncement(announcementLink, subB);
+    await receiveAnnouncement(announcementLink, subC);
     // Get Authors Public Key 
     let author_pk = subA.author_public_key();
     console.log("Channel registered by subscriber, author's public key: ", author_pk);
     
     subLinkA = await subscripeToChannel(announcementLink, subA);
     subLinkB = await subscripeToChannel(announcementLink, subB);
+    subLinkC = await subscripeToChannel(announcementLink, subC);
     /*
 
       Author receives subscribtions & sends out keyload (needed to attach messages)
@@ -135,7 +138,6 @@ async function main() {
 
         let public_payload = toBytes("Public");
         let masked_payload = toBytes("Masked");
-    
         console.log("Author sending tagged packet");
         response = await auth.clone().send_tagged_packet(keyload_link, public_payload, masked_payload);
         let tag_link = response.link;
@@ -200,6 +202,8 @@ async function main() {
     showMessages(messagesA, "SubA");
     let messagesB = await fetchNextMessages(subB);
     showMessages(messagesB, "SubB");
+    let messagesC = await fetchNextMessages(subC);
+    showMessages(messagesC, "SubC");
     // Print out received msgs
    } else {
     /*
